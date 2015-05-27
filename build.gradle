@@ -1,0 +1,64 @@
+apply plugin: 'java'
+
+version = '1.0.0'
+
+compileJava.options.encoding = 'UTF-8'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+sourceSets {
+    main {
+        java { srcDirs = ['src/main/java'] }
+    }
+}
+
+task buildPlugin(dependsOn: 'build', type: Copy) {
+    from 'build/libs/'
+    into "/out/"
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+repositories {
+    mavenCentral()
+
+    maven {
+        name 'Spigot'
+        url 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+
+    maven {
+        name 'BungeeCord'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+}
+
+dependencies {
+    provided 'org.spigotmc:spigot-api:1.8.6-R0.1-SNAPSHOT'
+    provided 'org.projectlombok:lombok:1.16.2'
+}
+
+artifacts {
+    archives jar
+}
+
+jar {
+    dependsOn configurations.runtime
+    from {
+        (configurations.runtime - configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+}
+
+if (!JavaVersion.current().isJava8Compatible()) {
+    logger.lifecycle("WARNING! You're trying to compile using an unsupported Java version! Please use JDK 1.8 or above!")
+}

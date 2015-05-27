@@ -1,0 +1,8 @@
+name: Nuggit
+version: 1.0.0
+description: Nuggit aims to ease the use of the Bukkit API by adding shortcuts to frequently used methods, in a simple API.
+author: Puharesource
+website: puharesource.io
+
+main: io.puharesource.mc.nuggit.Nuggit
+load: startup
